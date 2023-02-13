@@ -16,17 +16,20 @@ on the storeage engine for the backend part of the website. It should be able to
 
 ### Data diagram  :beginner:  
 ![My Image](back_tools/data_map.jpeg)
-### Tostart and use the console:
+
+### To start and use the console:
 * Clone this repo: `git clone "https://github.com/chesahkalu/AirBnB_clone.git"`
 * Enter AirBnb_clone directory: `cd AirBnB_clone`
-* To Run the console(interactively): enter `./console.py` to start the console. A prompt `(hbnb)` is displayed for input, then enter command. eg:
-	- (hbnb) `show` <user>
-		Prints the string representation of an instance based on the class name and id.
-	- (hbnb) `EOF`
-		exits console 
-* To Run hbnb(non-interactively): `echo "<command>" | ./console.py`. eg:
+* To Run the console(interactively): enter `./console.py`
+	- A prompt `(hbnb)` is displayed for input, then enter command. Example::memo:
+		- (hbnb) `show <user>` : Prints the string representation of an instance based on the class name and id.
+		- (hbnb) `EOF` : exits console
+		- (hbnb) `create <class>` : Create an object (prints its id)
+		- (hbnb) `all` or `all <class>` : Show all objects, or all instances of a class
+	
+* To Run hbnb(non-interactively): `echo "<command>" | ./console.py`. Example::memo:
 	- `echo "help" | ./console.py`
-		It shows the list of commands available. If you include a command you want help on, 
+		- It shows the list of commands available. If you include a command you want help on,
 		the output is more verbose and restricted to details of that command, when available.
 	- `echo "count place" | ./console.py`
-		Retrieves the number of instances of a given class : place
+		- Retrieves the number of instances of a given class : place
