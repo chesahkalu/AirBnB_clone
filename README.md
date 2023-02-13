@@ -25,8 +25,8 @@ on the storeage engine for the backend part of the website. It should be able to
 	- (hbnb) `EOF`
 		exits console 
 * To Run hbnb(non-interactively): `echo "<command>" | ./console.py`. eg:
-	- echo `"help" | ./console.py`
+	- `echo "help" | ./console.py`
 		It shows the list of commands available. If you include a command you want help on, 
 		the output is more verbose and restricted to details of that command, when available.
-	- echo `"count place" | ./console.py`
+	- `echo "count place" | ./console.py`
 		Retrieves the number of instances of a given class : place
