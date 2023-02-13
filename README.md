@@ -13,3 +13,6 @@ on the storeage engine for the backend part of the website. It should be able to
 - retrieve, store and persist objects to a file (JSON file)
 - operate on objects  (count, compute stats, etc...)
 - Update attributes of an object
+
+### Data diagram :
+![My Image](back_tools/data_map.jpeg)
