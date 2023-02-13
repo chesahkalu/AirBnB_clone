@@ -6,21 +6,30 @@ import models
 import uuid
 from datetime import datetime
 
-time_format = "%Y-%m-%dT%H:%M:%S.%f"
 
 class Basemodel:
         """contains the base model class that defines
         all common attributes/methods for other classes:"""
 
-        def __init__(self, id , created_at , updated_at):
+        def __init__(self, *args, **kwargs):
             """using *args and **kwargs to create an instance with a passed
             dictionary values"""
 
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            """normal creation of instance value with initialization"""
 
-	def __str__(self):
+            """if dictionary passed as argument,attributes of the instance is created.
+            string time format changed to object for the instance atribute"""
+            if kwargs:
+                  for k, v in kwargs.items():
+                    if k == "created_at" or k == "updated_at":
+                          self.__dict__[k] = datetime.strptime(v, "%Y-%m-%dT%H:%M:%S.%f")
+                    else:
+                        self.__dict__[k] = v
+
+        def __str__(self):
               """String printable representation of Basemodel instance"""
 
               return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
