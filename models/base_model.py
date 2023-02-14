@@ -12,22 +12,24 @@ class Basemodel:
         all common attributes/methods for other classes:"""
 
         def __init__(self, *args, **kwargs):
-            """using *args and **kwargs to create an instance with a passed
-            dictionary values"""
+            """using *args to create attributes for instances without knowing the intended
+            number of arguments to be passed a passed"""
 
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            """normal creation of instance value with initialization"""
+            """some certain attributes at initialization of instance"""
 
-            """if dictionary passed as argument,attributes of the instance is created.
+            """if dictionary passed as arguments,attributes of the instance is created.
             string time format changed to object for the instance atribute"""
             if kwargs:
-                  for k, v in kwargs.items():
-                    if k == "created_at" or k == "updated_at":
-                          self.__dict__[k] = datetime.strptime(v, "%Y-%m-%dT%H:%M:%S.%f")
+                  for key, value in kwargs.items():
+                    if key == "created_at" or key == "updated_at":
+                          self.__dict__[key] = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
                     else:
-                        self.__dict__[k] = v
+                        self.__dict__[key] = value
+            else:
+                 models.storage.new(self)
 
         def __str__(self):
               """String printable representation of Basemodel instance"""
@@ -49,3 +51,4 @@ class Basemodel:
               """Updates the attribute updated at with the current date and time"""
 
               self.updated_at = datetime.now()
+              models.storage.save(self)
