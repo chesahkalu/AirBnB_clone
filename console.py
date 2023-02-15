@@ -37,7 +37,7 @@ class HBNBCommand(cmd.Cmd):
         """Creates a new instance of a class"""
         args = shlex.split(arg)
         if len(args) == 0:
-            print("** class name missing **")
+           print("** class name missing **")
             return False
         if args[0] in classes:
             instance = classes[args[0]]()
