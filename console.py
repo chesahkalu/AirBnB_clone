@@ -1,9 +1,8 @@
 #!/usr/bin/python3
-""" The Console """
+""" console """
 
 import cmd
 from datetime import datetime
-import shlex  # used with split to make any argument seperated by space a single token, also if quoted.
 import models
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -12,106 +11,100 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+import shlex  # for splitting the line along spaces except in double quotes
 
-classes = {
-        "BaseModel",
-        "User",
-        "State",
-        "City",
-        "Place",
-        "Amenity",
-        "Review"}
+classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
+           "Place": Place, "Review": Review, "State": State, "User": User}
+
 
 class HBNBCommand(cmd.Cmd):
-    """The AirBnB console for command line interpreter"""
-
+    """ HBNH console """
     prompt = '(hbnb) '
+
+    def do_EOF(self, arg):
+        """Exits console"""
+        return True
+
+    def emptyline(self):
+        """ overwriting the emptyline method """
+        return False
 
     def do_quit(self, arg):
         """Quit command to exit the program"""
         return True
-    
-    def do_EOF(self, arg):
-        """Exits console"""
-        return True
-    
-    def emptyline(self):
-        """No execution when an empty line is ENTERED"""
-        pass
 
     def do_create(self, arg):
-        """command: create <class>
-        Creates a new instance of the given class"""
+        """Creates a new instance of a class"""
         args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
-        elif args[0] not in classes:
-            print("** class doesn't exist **")
+            return False
+        if args[0] in classes:
+            instance = classes[args[0]]()
         else:
-            new_instance = args[0]()
-        print(new_instance.id)
-        new_instance.save()
+            print("** class doesn't exist **")
+            return False
+        print(instance.id)
+        instance.save()
 
     def do_show(self, arg):
-        """command: show <class> <id> 
-        Prints a class instance string representation given the id"""
+        """Prints an instance as a string based on the class and id"""
         args = shlex.split(arg)
-        key = args[0] + "." + args[1]
-        get_all = models.storage.all()
         if len(args) == 0:
             print("** class name missing **")
-        elif args[0] not in classes:
-            print("** class doesn't exist **")
-        elif len(args) == 1:
-            print("** instance id missing **")
-        elif key not in get_all:
-            print("** no instance found **")
+            return False
+        if args[0] in classes:
+            if len(args) > 1:
+                key = args[0] + "." + args[1]
+                if key in models.storage.all():
+                    print(models.storage.all()[key])
+                else:
+                    print("** no instance found **")
+            else:
+                print("** instance id missing **")
         else:
-            print(get_all[key])
+            print("** class doesn't exist **")
 
     def do_destroy(self, arg):
-        """command: destroy <class> <id>
-        Deletes an instance based on the class and id"""
+        """Deletes an instance based on the class and id"""
         args = shlex.split(arg)
-        key = args[0] + "." + args[1]
-        get_all = models.storage.all()
         if len(args) == 0:
             print("** class name missing **")
-        elif args[0] not in classes:
-            print("** class doesn't exist **")
-        elif len(args) == 1:
-            print("** instance id missing **")
-        elif key not in get_all:
-            print("** no instance found **")
+        elif args[0] in classes:
+            if len(args) > 1:
+                key = args[0] + "." + args[1]
+                if key in models.storage.all():
+                    models.storage.all().pop(key)
+                    models.storage.save()
+                else:
+                    print("** no instance found **")
+            else:
+                print("** instance id missing **")
         else:
-            del get_all[key]
-            models.storage.save()
+            print("** class doesn't exist **")
 
     def do_all(self, arg):
-        """command: all <class> or all
-        Prints all string representation of all instances based on the class name
-        If no class is specified, displays all instantiated objects"""
+        """Prints string representations of instances"""
         args = shlex.split(arg)
-        o_list = []
-        if args[0] in classes:
+        obj_list = []
+        if len(args) == 0:
+            for value in models.storage.all().values():
+                obj_list.append(str(value))
+            print("[", end="")
+            print(", ".join(obj_list), end="")
+            print("]")
+        elif args[0] in classes:
             for key in models.storage.all():
                 if args[0] in key:
-                    o_list.append(str(models.storage.all()[key]))
+                    obj_list.append(str(models.storage.all()[key]))
             print("[", end="")
-            print(", ".join(o_list), end="")
-            print("]")
-        elif len(args) == 0:
-            for value in models.storage.all().values():
-                o_list.append(str(value))
-            print("[", end="")
-            print(", ".join(o_list), end="")
+            print(", ".join(obj_list), end="")
             print("]")
         else:
             print("** class doesn't exist **")
 
-    def do_count(self, arg):
-        """command: count <class>
-        Retrieve the number of instances of a given class."""    
+    def do_update(self, arg):
+        """Update an instance based on the class name, id, attribute & value"""
         args = shlex.split(arg)
         integers = ["number_rooms", "number_bathrooms", "max_guest",
                     "price_by_night"]
@@ -148,5 +141,5 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** class doesn't exist **")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     HBNBCommand().cmdloop()

@@ -1,54 +1,51 @@
 #!/usr/bin/python3
-"""contains the base model class that defines
-all common attributes/methods for other classes:"""
+"""
+Contains class BaseModel
+"""
 
+from datetime import datetime
 import models
 import uuid
-from datetime import datetime
+
+time = "%Y-%m-%dT%H:%M:%S.%f"
 
 
-class Basemodel:
-        """contains the base model class that defines
-        all common attributes/methods for other classes:"""
+class BaseModel:
+    """The BaseModel class from which future classes will be derived"""
 
-        def __init__(self, *args, **kwargs):
-            """using *args to create attributes for instances without knowing the intended
-            number of arguments to be passed a passed"""
-
+    def __init__(self, *args, **kwargs):
+        """Initialization of the base model"""
+        if kwargs:
+            for key, value in kwargs.items():
+                if key != "__class__":
+                    setattr(self, key, value)
+            if hasattr(self, "created_at") and type(self.created_at) is str:
+                self.created_at = datetime.strptime(kwargs["created_at"], time)
+            if hasattr(self, "updated_at") and type(self.updated_at) is str:
+                self.updated_at = datetime.strptime(kwargs["updated_at"], time)
+        else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
-            self.updated_at = datetime.now()
-            """some certain attributes at initialization of instance"""
+            self.updated_at = self.created_at
+            models.storage.new(self)
+            models.storage.save()
 
-            """if dictionary passed as arguments,attributes of the instance is created.
-            string time format changed to object for the instance atribute"""
-            if kwargs:
-                  for key, value in kwargs.items():
-                    if key == "created_at" or key == "updated_at":
-                          self.__dict__[key] = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                    else:
-                        self.__dict__[key] = value
-            else:
-                 models.storage.new(self)
+    def __str__(self):
+        """String representation of the BaseModel class"""
+        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id,
+                                         self.__dict__)
 
-        def __str__(self):
-              """String printable representation of Basemodel instance"""
+    def save(self):
+        """updates the attribute 'updated_at' with the current datetime"""
+        self.updated_at = datetime.now()
+        models.storage.save()
 
-              return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
-        
-        def to_dict(self):
-              """Returns dictionary format of all instances attribute,
-              class name, created_at and updated_at made readable as it
-              is in a data structure."""
-
-              all_dict = self.__dict__.copy()
-              all_dict["created_at"] = self.created_at.strftime("%Y-%m-%dT%H:%M:%S.%f")
-              all_dict["updated_at"] = self.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%f")
-              all_dict["__class__"] = self.__class__.__name__
-              return all_dict
-        
-        def save(self):
-              """Updates the attribute updated at with the current date and time"""
-
-              self.updated_at = datetime.now()
-              models.storage.save(self)
+    def to_dict(self):
+        """returns a dictionary containing all keys/values of the instance"""
+        new_dict = self.__dict__.copy()
+        if "created_at" in new_dict:
+            new_dict["created_at"] = new_dict["created_at"].strftime(time)
+        if "updated_at" in new_dict:
+            new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
+        new_dict["__class__"] = self.__class__.__name__
+        return new_dict
