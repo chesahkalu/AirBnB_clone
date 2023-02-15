@@ -1,9 +1,8 @@
 #!/usr/bin/python3
-""" The Console """
+""" console """
 
 import cmd
 from datetime import datetime
-import shlex  # used with split to make any argument seperated by space a single token, also if quoted.
 import models
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -12,6 +11,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+import shlex  # for splitting the line along spaces except in double quotes
 
 classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
@@ -37,7 +37,7 @@ class HBNBCommand(cmd.Cmd):
         """Creates a new instance of a class"""
         args = shlex.split(arg)
         if len(args) == 0:
-           print("** class name missing **")
+            print("** class name missing **")
             return False
         if args[0] in classes:
             instance = classes[args[0]]()
@@ -48,31 +48,22 @@ class HBNBCommand(cmd.Cmd):
         instance.save()
 
     def do_show(self, arg):
-        """command: show <class> <id> or <class>.show(<id>)
-        Display the string representation of a class instance of a given id."""
-        arg_parts = arg.split(' ')
-        if len(arg_parts) == 2:
-            class_name, obj_id = arg_parts
-        elif len(arg_parts) == 1 and '(' in arg_parts[0] and ')' in arg_parts[0]:
-            class_and_id = arg_parts[0].strip('()').split('.')
-            if len(class_and_id) == 2:
-                class_name, obj_id = class_and_id
+        """Prints an instance as a string based on the class and id"""
+        args = shlex.split(arg)
+        if len(args) == 0:
+            print("** class name missing **")
+            return False
+        if args[0] in classes:
+            if len(args) > 1:
+                key = args[0] + "." + args[1]
+                if key in models.storage.all():
+                    print(models.storage.all()[key])
+                else:
+                    print("** no instance found **")
             else:
-                print("** invalid format **")
-                return
+                print("** instance id missing **")
         else:
-            print("** invalid format **")
-            return
-
-        if class_name not in classes:
             print("** class doesn't exist **")
-            return
-
-        key = class_name + "." + obj_id
-        if key not in models.storage.all():
-            print("** no instance found **")
-        else:
-            print(models.storage.all()[key])
 
     def do_destroy(self, arg):
         """Deletes an instance based on the class and id"""
@@ -130,12 +121,12 @@ class HBNBCommand(cmd.Cmd):
                                 if args[2] in integers:
                                     try:
                                         args[3] = int(args[3])
-                                    except ValueError:
+                                    except:
                                         args[3] = 0
                                 elif args[2] in floats:
                                     try:
                                         args[3] = float(args[3])
-                                    except TypeError:
+                                    except:
                                         args[3] = 0.0
                             setattr(models.storage.all()[k], args[2], args[3])
                             models.storage.all()[k].save()
@@ -150,6 +141,6 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** class doesn't exist **")
 
-
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
+
