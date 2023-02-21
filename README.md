@@ -166,7 +166,22 @@ TestBaseModel class:
 * `def test_user_module_docstring(self)` - Test for the user.py module docstring
 * `def test_user_class_docstring(self)` - Test for the User class docstring
 
+# web_static :link:
 
+This is the second part of the **AirBnB clone** project. In this project I learnt and practiced:
+- What is HTML
+- How to create an HTML page
+- What is a markup language
+- What is the DOM
+- What is an element / tag
+- What is an attribute
+- How does the browser load a webpage
+- What is CSS
+- How to add style to an element
+- What is a class
+- What is a selector
+- How to compute CSS Specificity Value
+- What are Box properties in CSS
 
 ## Authors
 Chesachi Victor Kalu - [Github](https://github.com/chesahkalu) / [Twitter](https://twitter.com/ai_optimizer)  
